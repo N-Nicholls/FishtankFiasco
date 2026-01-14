@@ -1,0 +1,14 @@
+{
+    "screen": {
+        "width": 1920,
+        "height": 1080
+    },
+    "frameRate": 60,
+    "controls": {
+        "up": "K_p",
+        "down": "K_SEMICOLON",
+        "left": "K_l",
+        "right": "K_QUOTE",
+        "escape": "K_ESCAPE"
+    }
+}
