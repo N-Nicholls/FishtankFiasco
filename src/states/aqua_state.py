@@ -1,4 +1,4 @@
-from states.gamestate import GameState
+from states.game_state import GameState
 import pygame
 import random
 

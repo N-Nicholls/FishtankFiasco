@@ -1,4 +1,4 @@
-from core.spritesheet import SpriteSheet
+from core.sprite_sheet import SpriteSheet
 import pygame
 import random
 

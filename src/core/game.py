@@ -1,7 +1,9 @@
 import pygame
 import sys
+import json
 
-from states.aquastate import AquaState
+from states.aqua_state import AquaState
+from src.core.asset_manager import AssetManager
 
 class Game():
 
@@ -10,17 +12,45 @@ class Game():
         pygame.init()
         pygame.mixer.init()
         
+        # Load Path and Config Data
+        file_path = AssetManager.get_path("config.json")
+        file_path_default = AssetManager.get_path("config_default.json")
+        with open(file_path, 'r') as json_file:
+            config_data_loaded = json.load(json_file)
+        self.screen_width = config_data_loaded["screen"]["width"] 
+        self.screen_height = config_data_loaded["screen"]["height"]
+        self.frame_rate = config_data_loaded["frameRate"]
+        self.controls = self.load_controls(config_data_loaded["controls"]) # needs to convert json strings to PYGAME consts
+        print(f'Screen Width: {self.screen_width}, Screen Height: {self.screen_height}, Frame Rate: {self.frame_rate}')
 
-        # Set up the window
-        self.screen_width, self.screen_height = 800, 600
 
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.SCALED | pygame.DOUBLEBUF | pygame.HWSURFACE)
         pygame.display.set_caption("Basic Pygame Window")
         self.clock = pygame.time.Clock()
-        self.controls = None
         self.running = True
 
         self.state = AquaState(self, self.controls)
+
+    def load_controls(self, controls_config):
+        controls = {'right': pygame.K_l, 'left': pygame.K_QUOTE, 'up': pygame.K_p, 'down': pygame.K_SEMICOLON, 'escape': pygame.K_ESCAPE, 'enemy': pygame.K_1, 'button': pygame.K_2, 'player': pygame.K_3, 'slime': pygame.K_4}
+        for action, key_name in controls_config.items():
+            if isinstance(key_name, str):
+                if hasattr(pygame, key_name):
+                    controls[action] = getattr(pygame, key_name)
+                else:
+                    if action in self.controls:
+                        # controls[action] = self.default[action]
+                        print(f"Key specification for '{action}' not found, replacing with default '{self.controls[action]}'")
+                    else:
+                        print(f"Warning: Key specification for '{action}' is invalid and no default is provided")
+            else:
+                if action in self.controls:
+                    # controls[action] = self.default[action]
+                    print(f"Key specification for '{action}' was not a string or not found, replacing with default '{self.controls[action]}'")
+                else:
+                    print(f"Warning: Key specification for '{action}' is not a string and no default is provided. Found {type(key_name).__name__} instead.")
+        return controls
+
 
     def run(self):
         while self.running:
@@ -28,7 +58,7 @@ class Game():
             for event in events:
                 if event.type == pygame.QUIT:
                     self.running = False   
-            self.clock.tick(60)
+            self.clock.tick(self.frame_rate)
             self.state.draw(self.screen)
             self.state.handleEvents(events)
             self.state.update()
@@ -37,7 +67,6 @@ class Game():
         self.state = state
 
     def quit():
-        # Clean up
         pygame.quit()
         sys.exit()
 
