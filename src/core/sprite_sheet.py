@@ -14,7 +14,7 @@ class SpriteSheet:
         image.blit(self.sheet, (0, 0), ((col * width), height*row, width, height))
         if colorkey is not None:
             image.set_colorkey(colorkey, pygame.RLEACCEL) # run length encoder, not sure the limitations on this.
-        if scale is not 1:
+        if scale != 1:
             image = pygame.transform.scale(image, (width*scale, height*scale))
         return image
 

@@ -17,4 +17,4 @@ class AssetManager:
             path = os.path.join(cls.DATA_DIR, subfolder, filename)
         else:
             path = os.path.join(cls.DATA_DIR, filename)
-        return path
+        return path 

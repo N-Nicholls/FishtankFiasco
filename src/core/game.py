@@ -1,8 +1,10 @@
 import pygame
 import sys
 import json
+import shutil
+from pathlib import Path
 
-from states.aqua_state import AquaState
+from src.states.aqua_state import AquaState
 from src.core.asset_manager import AssetManager
 
 class Game():
@@ -13,8 +15,15 @@ class Game():
         pygame.mixer.init()
         
         # Load Path and Config Data
-        file_path = AssetManager.get_path("config.json")
-        file_path_default = AssetManager.get_path("config_default.json")
+        file_path = Path(AssetManager.get_path("config.json"))
+        file_path_default = Path(AssetManager.get_path("config_default.json"))
+
+        
+        # If config doesn't exist, copy default
+        if not file_path.is_file():
+            shutil.copy(file_path_default, file_path)
+
+
         with open(file_path, 'r') as json_file:
             config_data_loaded = json.load(json_file)
         self.screen_width = config_data_loaded["screen"]["width"] 
@@ -32,7 +41,7 @@ class Game():
         self.state = AquaState(self, self.controls)
 
     def load_controls(self, controls_config):
-        controls = {'right': pygame.K_l, 'left': pygame.K_QUOTE, 'up': pygame.K_p, 'down': pygame.K_SEMICOLON, 'escape': pygame.K_ESCAPE, 'enemy': pygame.K_1, 'button': pygame.K_2, 'player': pygame.K_3, 'slime': pygame.K_4}
+        controls = {'right': pygame.K_d, 'left': pygame.K_a, 'up': pygame.K_w, 'down': pygame.K_s, 'escape': pygame.K_ESCAPE, 'k1': pygame.K_1, 'k2': pygame.K_2, 'k3': pygame.K_3, 'k4': pygame.K_4}
         for action, key_name in controls_config.items():
             if isinstance(key_name, str):
                 if hasattr(pygame, key_name):
@@ -54,11 +63,12 @@ class Game():
 
     def run(self):
         while self.running:
+            self.time_delta = self.clock.tick(self.frame_rate)/1000.0
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
                     self.running = False   
-            self.clock.tick(self.frame_rate)
+            
             self.state.draw(self.screen)
             self.state.handleEvents(events)
             self.state.update()
