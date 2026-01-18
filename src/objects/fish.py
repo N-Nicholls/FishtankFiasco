@@ -8,6 +8,7 @@ import math
 class Fish(pygame.sprite.Sprite):
     fish_one = AssetManager.get_path("fishy1.png", "sprites")
     fish_two = AssetManager.get_path("fishy2.png", "sprites")
+    fish_three = AssetManager.get_path("fishy3.png", "sprites")
 
     def __init__(self, game, pos = (0,0), type = None):
         super(Fish, self).__init__()
@@ -82,7 +83,7 @@ class Fish(pygame.sprite.Sprite):
     # move away from others 
     def avoidOthers(self):
         move = Vector(0, 0)
-        for boid in self.game.state.boid_fish:
+        for boid in self.game.state.prey:
             if boid != self and self.rect_distance_center(boid.rect) < self.minDistance:
                 move.x += (self.rect.centerx - boid.rect.centerx)
                 move.y += (self.rect.centery - boid.rect.centery)
@@ -106,7 +107,7 @@ class Fish(pygame.sprite.Sprite):
         center = [0, 0]
         numNeighbors = 0
 
-        for boid in self.game.state.boid_fish:
+        for boid in self.game.state.prey:
             if boid != self and self.rect_distance_center(boid.rect) < self.visualRange:
                 center[0] += boid.rect.centerx
                 center[1] += boid.rect.centery
@@ -125,7 +126,7 @@ class Fish(pygame.sprite.Sprite):
         avgDx = Vector(0, 0)
         numNeighbors = 0
 
-        for boid in self.game.state.boid_fish:
+        for boid in self.game.state.prey:
             if self.rect_distance_center(boid.rect) < self.visualRange and boid != self: # maybe move
                 avgDx += boid.velocity
                 numNeighbors += 1
