@@ -39,7 +39,7 @@ If you are on Linux, I trust you can figure it out. If you're on Mac, see if you
 2. Type these commands to make a virtual enivronment: 
 
 ```bash
-python -m venv vev
+python -m venv venv
 
 # Wait a moment for it to download. You should see a (venv) in front of 
 # your terminal text and a venv folder.
